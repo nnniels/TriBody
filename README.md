@@ -3,7 +3,7 @@ This code is all about solving the **three-body problem**, in some cases known t
  - Simply download already generated videos in the *Animations* folder,
  - Or, get the code and generate your own animations :)
 
-<img src="https://github.com/nnniels/TriBody/blob/main/Exemple_8.gif" width="250" height="250"/> <img src="https://github.com/nnniels/TriBody/blob/main/Exemple_Moth_I.gif" width="250" height="250"/> <img src="https://github.com/nnniels/TriBody/blob/main/Exemple_Butterfly_II.gif" width="250" height="250"/>
+<img src="https://github.com/nnniels/TriBody/blob/main/gifs/Exemple_8.gif" width="250" height="250"/> <img src="https://github.com/nnniels/TriBody/blob/main/gifs/Exemple_Moth_I.gif" width="250" height="250"/> <img src="https://github.com/nnniels/TriBody/blob/main/gifs/Exemple_Butterfly_II.gif" width="250" height="250"/>
 
 Disclaimer : this code is obviously amateur's work. No garantee, no support, just funny planar periodical trajectories.
 
@@ -26,7 +26,9 @@ A vast part of the initial conditions comes from http://three-body.ipb.ac.rs/ind
 The related paper can be found here : http://arxiv.org/pdf/1303.0181.
 
 The rest comes from https://github.com/mws262/MAE5730_examples/tree/master/3BodySolutions.
+
 Many thanks to them !
 
-The idea that motivated the project is there : https://www.reddit.com/r/interestingasfuck/comments/1f60cvq/there_is_no_general_closedform_solution_to_the/
+The idea that motivated the project is there : https://www.reddit.com/r/interestingasfuck/comments/1f60cvq/there_is_no_general_closedform_solution_to_the/.
+
 I hope one day someone will be able to use the trajectories generated here to recreate animations as nice as those.
