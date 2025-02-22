@@ -10,7 +10,7 @@ import time
 
 Neval = 1000
 Solutions = [k for k in range(-15, 18, 1)]
-Solutions = [17]
+Solutions = [-15]
 
 
 """ 
@@ -25,11 +25,11 @@ Solutions = [17]
 
 for Solution in Solutions :
     t0 = time.time()
-    t, sv, Neval = Solve(Solution, Neval)
+    t, sv, Neval = Solve(Solution, Neval, periods=1)
     img = ImageMaker(sv, Neval, Solution)
     
     
-    #img.Plot()
+    img.Plot()
     img.Animation()
     print(f"-> done for solution {Solution}\n in {time.time()-t0}s\n")
 
