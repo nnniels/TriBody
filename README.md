@@ -21,7 +21,8 @@ I have no idea how licensing for images and videos work, so just do as you pleas
 ## Sources
 
 A vast part of the initial conditions comes from http://three-body.ipb.ac.rs/index.php.
-The related paper can be found here : http://arxiv.org/pdf/1303.0181
+The related paper can be found here : http://arxiv.org/pdf/1303.0181.
+
 The rest comes from https://github.com/mws262/MAE5730_examples/tree/master/3BodySolutions.
 Many thanks to them !
 
