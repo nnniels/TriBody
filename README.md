@@ -3,6 +3,9 @@ This code is all about solving the **three-body problem**, in some cases known t
  - Simply download already generated videos in the *Animations* folder,
  - Or, get the code and generate your own animations :)
 
+![til](https://github.com/nnniels/TriBody/blob/main/Exemple_8.gif)
+
+
 Disclaimer : this code is obviously amateur's work. No garantee, no support, just funny planar periodical trajectories.
 
 ## Install & dependencies
