@@ -7,7 +7,25 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 
+"""
+    ImageMaker is a class that plots the state vector, and create an animation
+    of the trajectory.
+    
+    On initialisation : 
+        load the state vector sv and the number of points.
+    
+    On Animation and Plot : 
+        the trajectory is scaled to fit in a 4 by 4 graph.
+    
+    Alphas and Width :
+        functions to shape the tail of the planets.
+        
+    update_line :
+        internal use for the matplotlib.animation.animation thing.
+        Basically return the positions of the planets and tails at a given frame.
 
+
+"""
 class ImageMaker():
     def __init__(self, sv, Neval, SolutionNumber):
         self.sv = sv
@@ -102,7 +120,7 @@ class ImageMaker():
         plt.figure(dpi=120, figsize=(7,7))
         plt.style.use('dark_background')
         plt.tight_layout()
-        plt.title(self.sol)
+        plt.title("solution " + str(self.sol))
         circle = plt.Circle((0, 0), 1, color='black', fill=False)
         plt.xlim(-2, 2)
         plt.ylim(-2, 2)

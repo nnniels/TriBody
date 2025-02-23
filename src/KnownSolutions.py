@@ -4,9 +4,33 @@
 import numpy as np
 
 
+
+""" 
+    A lot of solution follow the same pattern and can be caracterised by
+    p1 and p2 only.
+"""
 def Newtonian(p1, p2):
     inits = [-1, 0, 1, 0, 0, 0, p1, p2, p1, p2, -2*p1, -2*p2]
     return inits
+
+
+
+"""
+    This function takes in a solution number, and return the corresponding
+    initial conditions.
+    The solutions are all periodic and planar.
+    
+    Tend is the period's duration.
+    inits is [x1, y1, 
+              x2, y2, 
+              x3, y3, 
+              
+              v1x, v1y, 
+              v2x, v2y, 
+              v3x, v3y]
+    where 1,2,3 are planets of mass 1. G is 1.
+
+"""
 
 def KnownSolutions(SolNumber):
     # solution 1 to 17 found on github
@@ -307,7 +331,7 @@ def KnownSolutions(SolNumber):
         tend = 6.868155929188273
     elif SolNumber == 11:
         # Beauteliful loop-ended triangles inside an oval
-        print('Beauteliful loop-ended triangles inside an oval.')
+        print('Beautiful loop-ended triangles inside an oval.')
         inits = [1.666163752077218e-1,
                  -1.081921852656887e+1,
                  0.974807336315507e-1,
