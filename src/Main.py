@@ -8,11 +8,11 @@ from Solver import Solver
 from ImageMaker import ImageMaker
 import time
 
-Neval = 1000
+Neval = 600
 
 # the initial conditions you want to solve the problem for
 Solutions = [k for k in range(-15, 18, 1)]
-Solutions = [17]
+Solutions = [1]
 
 
 """ 
@@ -30,16 +30,16 @@ for Solution in Solutions :
     t0 = time.time()
     # create solver and solve problem
     sol = Solver()
-    t, sv, Neval = sol.Solve(Solution, Neval, periods=0.6)
+    t, sv, Neval = sol.Solve(Solution, Neval, periods=1)
     print(f"-> solved {Solution}\n in {time.time()-t0}s\n")
     
     # create plots and animations maker
-    img = ImageMaker(sv, Neval, Solution)
+    img = ImageMaker(sv, Solution)
     
     # this is fast and sufficient to check correct solving
-    img.Plot()
+    #img.Plot()
     # this can take a looooong time
-    img.Animation()
+    img.Animation2()
     # all done !
     print(f"-> done for solution {Solution}\n in {time.time()-t0}s\n")
 

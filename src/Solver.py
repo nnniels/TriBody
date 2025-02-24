@@ -18,7 +18,8 @@ from StateVectorDerivator import StateVectorDerivator
         NB : the period is normalized to 1 by StateVectorDerivator, hence the Tspan
         
     Load/ Save :
-        save and load .npy correspondign to the state vector.
+        works on Linux system only.
+        save and load .npy corresponding to the state vector.
         Use it to save time or export data to another code.
         if text=True, you can save the state vector as a text file.
 

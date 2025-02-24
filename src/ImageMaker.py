@@ -27,11 +27,13 @@ import matplotlib.animation as animation
 
 """
 class ImageMaker():
-    def __init__(self, sv, Neval, SolutionNumber):
+    def __init__(self, sv, SolutionNumber):
         self.sv = sv
-        self.Neval = Neval
+        _, self.Neval = sv.shape
         self.sol = SolutionNumber
         self.PlanetColor = ["darkorange", "darkturquoise", "orchid"]
+        self.PlanetColor2 = ["gold", "mediumorchid", "deepskyblue"]
+
         if sv is None :
             print(f"state vector is none for solution {SolutionNumber}")
             return None
@@ -78,6 +80,25 @@ class ImageMaker():
             line3[i].set_data(sv[4:6, frame-Ltail*(i+1):frame])
         return [pline1, pline2, pline3] + [l for l in line1] + [l for l in line2] + [l for l in line3]
     
+    def update_line2(self, frame, pline1, pline2, pline3, line1, line2, line3, sv, n):
+        pline1.set_data(sv[0:2, :frame])
+        pline2.set_data(sv[2:4, :frame])
+        pline3.set_data(sv[4:6, :frame])
+        Ntail = min(len(line1), len(line2), len(line3))
+        deg = 4
+        Ltail = max(n//(deg*Ntail), n//200)
+        
+        for i in range(Ntail) :
+            l = round(frame-Ltail*(i+1)**1.5)%self.Neval #gives funny results
+            t1 = np.hstack(( sv[0:2, l:-1], sv[0:2, l:frame] ))
+            t2 = np.hstack(( sv[2:4, l:-1], sv[2:4, l:frame] ))
+            t3 = np.hstack(( sv[4:6, l:-1], sv[4:6, l:frame] ))
+
+            line1[i].set_data( t1 )
+            line2[i].set_data( t2 )
+            line3[i].set_data( t3 )
+        return [pline1, pline2, pline3] + [l for l in line1] + [l for l in line2] + [l for l in line3]
+    
     
     def Animation(self):
         print("starting animation ...")
@@ -114,6 +135,43 @@ class ImageMaker():
         # To save the animation, use the command: line_ani.save('lines.mp4')
         #plt.show()
         line_ani.save("tribody_" + str(self.sol) +".mp4")
+        print("done")
+    
+    def Animation2(self):
+        print("starting animation ...")
+        fig1 = plt.figure(dpi=200)
+        plt.style.use('dark_background')
+        plt.tight_layout()
+        plt.gca().set_aspect('equal', adjustable='box')
+        p1, = plt.plot([], [], self.PlanetColor2[0], marker='o', linestyle='', markevery=[-1])
+        p2, = plt.plot([], [], self.PlanetColor2[1], marker='o', linestyle='', markevery=[-1])
+        p3, = plt.plot([], [], self.PlanetColor2[2], marker='o', linestyle='', markevery=[-1])
+        
+        ntails = 20
+        l1 = []
+        l2 = []
+        l3 = []
+        alphas = self.Alphas(ntails, start=0.2)
+        widths = self.Widths(ntails, 5)
+        for i in range(ntails):
+            l, = plt.plot([], [], self.PlanetColor2[0], linestyle='-', linewidth=widths[i], alpha=alphas[i])
+            l1.append(l)
+            l, = plt.plot([], [], self.PlanetColor2[1], linestyle='-', linewidth=widths[i], alpha=alphas[i])
+            l2.append(l)
+            l, = plt.plot([], [], self.PlanetColor2[2], linestyle='-', linewidth=widths[i], alpha=alphas[i])
+            l3.append(l)
+        
+        
+        plt.xlim(-2, 2)
+        plt.ylim(-2, 2)
+        plt.axis('off')
+        plt.gca().set_position((0, 0, 1, 1))
+        line_ani = animation.FuncAnimation(fig1, self.update_line2, self.Neval, fargs=(p1, p2, p3, l1, l2, l3, self.sv, self.Neval),
+                                           interval=7, blit=True)
+        
+        # To save the animation, use the command: line_ani.save('lines.mp4')
+        #plt.show()
+        line_ani.save("tribody_beg_" + str(self.sol) +".mp4")
         print("done")
     
     def Plot(self):
