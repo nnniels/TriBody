@@ -16,7 +16,7 @@ from StateVectorDerivator import StateVectorDerivator
         Take a Solution number, and find the corresponding initial conditions.
         Adjust the number of iterations based on the period of the solution.
         NB : the period is normalized to 1 by StateVectorDerivator, hence the Tspan
-        
+        -Ltails[i]
     Load/ Save :
         works on Linux system only.
         save and load .npy corresponding to the state vector.
@@ -55,7 +55,7 @@ class Solver():
             print("corrected Neval")
             Neval = EvalMax
         
-        Teval = np.linspace(0, 1.1*periods, Neval)
+        Teval = np.linspace(0, 1.0*periods, Neval)
         Tspan = (Teval[0], Teval[-1])
         print(f"solving for {periods} period(s)")
         print("solving...")

@@ -39,6 +39,8 @@ class ImageMaker():
             return None
         self.sv = self.Scaler(self.sv)
         print("scaled state vector")
+        i0 = np.arange(0, self.Neval, 1)
+        self.indices = np.hstack((i0, i0, i0))
 
     
     def Alphas(self, ntails, start=1):
@@ -47,7 +49,7 @@ class ImageMaker():
     def Widths(self, ntails, start=1):
         return [start*np.exp(-k/5)+1 for k in range(ntails)]
     
-    
+    """scale graph"""
     def Scaler(self, sv, scale=3):
         mxx = np.max(sv[[0, 2, 4], :])
         mnx = np.min(sv[[0, 2, 4], :])
@@ -65,6 +67,31 @@ class ImageMaker():
         sv[[1, 3, 5], :] *= scaley
         return sv
     
+    """
+        return a circular slice of array sv
+        slice : starting at a distance d from index p,
+                length l
+    """
+    def CircularParser(self, sv, p, d, l):
+        _, n = sv.shape
+        p = int(p)
+        d = int(d)
+        l = int(l)
+        if d+l-p > n+1 :
+            # slice too far
+            print(f" error n : {n} p : {p} d : {d} l : {l}")
+            return None
+        
+        if (p - (d+l) ) >= 0 :
+            # no circular slicing
+            return sv[:, p-d-l+1 : p-d+1]
+        elif (p-d) >= 0 :
+            # slice includes both ends of array
+            return np.concatenate( (sv[:, 0 : p-d+1], sv[:, n - (l-(p-d))+1 : n]), axis=1)
+        else :
+            # slice is a full array away from p
+            return sv[:, n-(d-p)-l+1 : n-(d-p)+1]
+    
     
     def update_line(self, frame, pline1, pline2, pline3, line1, line2, line3, sv, n):
         pline1.set_data(sv[0:2, :frame])
@@ -81,19 +108,27 @@ class ImageMaker():
         return [pline1, pline2, pline3] + [l for l in line1] + [l for l in line2] + [l for l in line3]
     
     def update_line2(self, frame, pline1, pline2, pline3, line1, line2, line3, sv, n):
+        # planets position
         pline1.set_data(sv[0:2, :frame])
         pline2.set_data(sv[2:4, :frame])
         pline3.set_data(sv[4:6, :frame])
+        
+        # tails positions
         Ntail = min(len(line1), len(line2), len(line3))
         deg = 4
-        Ltail = max(n//(deg*Ntail), n//200)
+        Ctail = max(n//(deg*Ntail), n//200)
+        Ctail = 3
+        # tails lengths
+        Ltails = np.round(Ctail*np.arange(0, Ntail+2, 1)**1.5)
+        #print(f"Ltails {Ltails}")
+        #print(f"Ctail {Ctail}")
+
         
         for i in range(Ntail) :
-            l = round(frame-Ltail*(i+1)**1.5)%self.Neval #gives funny results
-            t1 = np.hstack(( sv[0:2, l:-1], sv[0:2, l:frame] ))
-            t2 = np.hstack(( sv[2:4, l:-1], sv[2:4, l:frame] ))
-            t3 = np.hstack(( sv[4:6, l:-1], sv[4:6, l:frame] ))
-
+            t1 = self.CircularParser(sv[0:2, :], frame, Ltails[i], Ltails[i+1]-Ltails[i])
+            t2 = self.CircularParser(sv[2:4, :], frame, Ltails[i], Ltails[i+1]-Ltails[i])
+            t3 = self.CircularParser(sv[4:6, :], frame, Ltails[i], Ltails[i+1]-Ltails[i])
+            
             line1[i].set_data( t1 )
             line2[i].set_data( t2 )
             line3[i].set_data( t3 )
@@ -151,7 +186,7 @@ class ImageMaker():
         l1 = []
         l2 = []
         l3 = []
-        alphas = self.Alphas(ntails, start=0.2)
+        alphas = self.Alphas(ntails, start=0.4)
         widths = self.Widths(ntails, 5)
         for i in range(ntails):
             l, = plt.plot([], [], self.PlanetColor2[0], linestyle='-', linewidth=widths[i], alpha=alphas[i])

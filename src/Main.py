@@ -8,7 +8,7 @@ from Solver import Solver
 from ImageMaker import ImageMaker
 import time
 
-Neval = 600
+Neval = 400
 
 # the initial conditions you want to solve the problem for
 Solutions = [k for k in range(-15, 18, 1)]
