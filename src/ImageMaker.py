@@ -41,7 +41,21 @@ class ImageMaker():
         print("scaled state vector")
         i0 = np.arange(0, self.Neval, 1)
         self.indices = np.hstack((i0, i0, i0))
-
+    
+    
+    def SetTailParameters(self, Ltail, Ntail, Dplanet):
+        self.Ltail=Ltail
+        self.Ntail=Ntail
+        self.Dplanet = Dplanet
+        
+        self.Ctail = Ltail / (Ntail+2)**1.5
+        self.Ltails = np.round(self.Ctail*np.arange(1, self.Ntail+3, 1)**1.5)
+    
+    def AutoSetTailsParameters(self):
+        Dplanet = 5
+        Ltail = round(self.Neval * 0.8)
+        Ntail = 20
+        self.SetTailParameters(Ltail, Ntail, Dplanet)
     
     def Alphas(self, ntails, start=1):
         return [start*(1-k/ntails) for k in range(ntails)]
@@ -107,23 +121,24 @@ class ImageMaker():
             line3[i].set_data(sv[4:6, frame-Ltail*(i+1):frame])
         return [pline1, pline2, pline3] + [l for l in line1] + [l for l in line2] + [l for l in line3]
     
-    def update_line2(self, frame, pline1, pline2, pline3, line1, line2, line3, sv, n):
+    
+    
+    def update_line2(self, frame, line1, line2, line3, pline1, pline2, pline3, hline1, hline2, hline3, sv, n):
         # planets position
         pline1.set_data(sv[0:2, :frame])
         pline2.set_data(sv[2:4, :frame])
         pline3.set_data(sv[4:6, :frame])
         
-        # tails positions
-        Ntail = min(len(line1), len(line2), len(line3))
-        deg = 4
-        Ctail = max(n//(deg*Ntail), n//200)
-        Ctail = 3
-        # tails lengths
-        Ltails = np.round(Ctail*np.arange(0, Ntail+2, 1)**1.5)
-        #print(f"Ltails {Ltails}")
-        #print(f"Ctail {Ctail}")
-
+        hline1.set_data(sv[0:2, :frame])
+        hline2.set_data(sv[2:4, :frame])
+        hline3.set_data(sv[4:6, :frame])
         
+        # tails positions
+        Ntail = self.Ntail
+        Ctail = self.Ctail
+        # tails lengths
+        Ltails = self.Ltails
+
         for i in range(Ntail) :
             t1 = self.CircularParser(sv[0:2, :], frame, Ltails[i], Ltails[i+1]-Ltails[i])
             t2 = self.CircularParser(sv[2:4, :], frame, Ltails[i], Ltails[i+1]-Ltails[i])
@@ -132,7 +147,7 @@ class ImageMaker():
             line1[i].set_data( t1 )
             line2[i].set_data( t2 )
             line3[i].set_data( t3 )
-        return [pline1, pline2, pline3] + [l for l in line1] + [l for l in line2] + [l for l in line3]
+        return [l for l in line1] + [l for l in line2] + [l for l in line3] + [pline1, pline2, pline3, hline1, hline2, hline3] 
     
     
     def Animation(self):
@@ -171,6 +186,8 @@ class ImageMaker():
         #plt.show()
         line_ani.save("tribody_" + str(self.sol) +".mp4")
         print("done")
+        
+        
     
     def Animation2(self):
         print("starting animation ...")
@@ -178,17 +195,13 @@ class ImageMaker():
         plt.style.use('dark_background')
         plt.tight_layout()
         plt.gca().set_aspect('equal', adjustable='box')
-        p1, = plt.plot([], [], self.PlanetColor2[0], marker='o', linestyle='', markevery=[-1])
-        p2, = plt.plot([], [], self.PlanetColor2[1], marker='o', linestyle='', markevery=[-1])
-        p3, = plt.plot([], [], self.PlanetColor2[2], marker='o', linestyle='', markevery=[-1])
         
-        ntails = 20
         l1 = []
         l2 = []
         l3 = []
-        alphas = self.Alphas(ntails, start=0.4)
-        widths = self.Widths(ntails, 5)
-        for i in range(ntails):
+        alphas = self.Alphas(self.Ntail, start=0.6)
+        widths = self.Widths(self.Ntail, round(self.Dplanet*0.7))
+        for i in range(self.Ntail):
             l, = plt.plot([], [], self.PlanetColor2[0], linestyle='-', linewidth=widths[i], alpha=alphas[i])
             l1.append(l)
             l, = plt.plot([], [], self.PlanetColor2[1], linestyle='-', linewidth=widths[i], alpha=alphas[i])
@@ -196,17 +209,24 @@ class ImageMaker():
             l, = plt.plot([], [], self.PlanetColor2[2], linestyle='-', linewidth=widths[i], alpha=alphas[i])
             l3.append(l)
         
+        p1, = plt.plot([], [], self.PlanetColor2[0], marker='o', linestyle='', markevery=[-1], markersize=self.Dplanet)
+        p2, = plt.plot([], [], self.PlanetColor2[1], marker='o', linestyle='', markevery=[-1], markersize=self.Dplanet)
+        p3, = plt.plot([], [], self.PlanetColor2[2], marker='o', linestyle='', markevery=[-1], markersize=self.Dplanet)
+        
+        alpha0 = 0.5
+        h1, = plt.plot([], [], "white", marker='o', linestyle='', markevery=[-1], markersize=self.Dplanet//1.4, alpha=alpha0 )
+        h2, = plt.plot([], [], "white", marker='o', linestyle='', markevery=[-1], markersize=self.Dplanet//1.4, alpha=alpha0 )
+        h3, = plt.plot([], [], "white", marker='o', linestyle='', markevery=[-1], markersize=self.Dplanet//1.4, alpha=alpha0 )
+
         
         plt.xlim(-2, 2)
         plt.ylim(-2, 2)
         plt.axis('off')
         plt.gca().set_position((0, 0, 1, 1))
-        line_ani = animation.FuncAnimation(fig1, self.update_line2, self.Neval, fargs=(p1, p2, p3, l1, l2, l3, self.sv, self.Neval),
+        line_ani = animation.FuncAnimation(fig1, self.update_line2, self.Neval, fargs=(l1, l2, l3, p1, p2, p3, h1, h2, h3, self.sv, self.Neval),
                                            interval=7, blit=True)
         
-        # To save the animation, use the command: line_ani.save('lines.mp4')
-        #plt.show()
-        line_ani.save("tribody_beg_" + str(self.sol) +".mp4")
+        line_ani.save("tribody_" + str(self.sol) +".mp4")
         print("done")
     
     def Plot(self):

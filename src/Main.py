@@ -35,8 +35,9 @@ for Solution in Solutions :
     
     # create plots and animations maker
     img = ImageMaker(sv, Solution)
+    img.AutoSetTailsParameters()
     
-    # this is fast and sufficient to check correct solving
+    # plotting is fast and sufficient to check correct solving
     #img.Plot()
     # this can take a looooong time
     img.Animation2()
