@@ -130,8 +130,8 @@ class ImageMaker():
         for i in range(Ntail) :
             tail = self.CircularParser(sv[:, :], frame, Ltails[i], Ltails[i+1]-Ltails[i])[:, :-1]
             t1 = tail[0:2, :]
-            t2 = tail[0:2, :]
-            t3 = tail[0:2, :]
+            t2 = tail[2:4, :]
+            t3 = tail[4:6, :]
             
             line1[i].set_data( t1 )
             line2[i].set_data( t2 )
