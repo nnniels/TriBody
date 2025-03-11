@@ -40,7 +40,7 @@ for Solution in Solutions :
     # plotting is fast and sufficient to check correct solving
     #img.Plot()
     # this can take a looooong time
-    img.Animation2()
+    img.Animation()
     # all done !
     print(f"-> done for solution {Solution}\n in {time.time()-t0}s\n")
 

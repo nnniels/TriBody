@@ -32,7 +32,9 @@ class ImageMaker():
         _, self.Neval = sv.shape
         self.sol = SolutionNumber
         self.PlanetColor = ["darkorange", "darkturquoise", "orchid"]
-        self.PlanetColor2 = ["gold", "mediumorchid", "deepskyblue"]
+        self.PlanetColor3 = ["gold", "mediumorchid", "deepskyblue"]
+        self.PlanetColor2 = ["gold", "cyan", "fuchsia"]
+
 
         if sv is None :
             print(f"state vector is none for solution {SolutionNumber}")
@@ -101,29 +103,15 @@ class ImageMaker():
             return sv[:, p-d-l+1 : p-d+1]
         elif (p-d) >= 0 :
             # slice includes both ends of array
-            return np.concatenate( (sv[:, 0 : p-d+1], sv[:, n - (l-(p-d))+1 : n]), axis=1)
+            return np.concatenate( ( sv[:, n - (l-(p-d))+1 : n], sv[:, 0 : p-d+1] ), axis=1)
         else :
             # slice is a full array away from p
             return sv[:, n-(d-p)-l+1 : n-(d-p)+1]
     
     
-    def update_line(self, frame, pline1, pline2, pline3, line1, line2, line3, sv, n):
-        pline1.set_data(sv[0:2, :frame])
-        pline2.set_data(sv[2:4, :frame])
-        pline3.set_data(sv[4:6, :frame])
-        Ntail = min(len(line1), len(line2), len(line3))
-        deg = 4
-        Ltail = max(n//(deg*Ntail), n//200)
-        
-        for i in range(Ntail) :
-            line1[i].set_data(sv[0:2, frame-Ltail*(i+1):frame])
-            line2[i].set_data(sv[2:4, frame-Ltail*(i+1):frame])
-            line3[i].set_data(sv[4:6, frame-Ltail*(i+1):frame])
-        return [pline1, pline2, pline3] + [l for l in line1] + [l for l in line2] + [l for l in line3]
+
     
-    
-    
-    def update_line2(self, frame, line1, line2, line3, pline1, pline2, pline3, hline1, hline2, hline3, sv, n):
+    def update_line(self, frame, line1, line2, line3, pline1, pline2, pline3, hline1, hline2, hline3, sv, n):
         # planets position
         pline1.set_data(sv[0:2, :frame])
         pline2.set_data(sv[2:4, :frame])
@@ -140,56 +128,19 @@ class ImageMaker():
         Ltails = self.Ltails
 
         for i in range(Ntail) :
-            t1 = self.CircularParser(sv[0:2, :], frame, Ltails[i], Ltails[i+1]-Ltails[i])
-            t2 = self.CircularParser(sv[2:4, :], frame, Ltails[i], Ltails[i+1]-Ltails[i])
-            t3 = self.CircularParser(sv[4:6, :], frame, Ltails[i], Ltails[i+1]-Ltails[i])
+            tail = self.CircularParser(sv[:, :], frame, Ltails[i], Ltails[i+1]-Ltails[i])[:, :-1]
+            t1 = tail[0:2, :]
+            t2 = tail[0:2, :]
+            t3 = tail[0:2, :]
             
             line1[i].set_data( t1 )
             line2[i].set_data( t2 )
             line3[i].set_data( t3 )
         return [l for l in line1] + [l for l in line2] + [l for l in line3] + [pline1, pline2, pline3, hline1, hline2, hline3] 
-    
+        
+        
     
     def Animation(self):
-        print("starting animation ...")
-        fig1 = plt.figure(dpi=200)
-        plt.style.use('dark_background')
-        plt.tight_layout()
-        plt.gca().set_aspect('equal', adjustable='box')
-        p1, = plt.plot([], [], self.PlanetColor[0], marker='o', linestyle='', markevery=[-1])
-        p2, = plt.plot([], [], self.PlanetColor[1], marker='o', linestyle='', markevery=[-1])
-        p3, = plt.plot([], [], self.PlanetColor[2], marker='o', linestyle='', markevery=[-1])
-        
-        ntails = 20
-        l1 = []
-        l2 = []
-        l3 = []
-        alphas = self.Alphas(ntails, start=0.2)
-        widths = self.Widths(ntails, 5)
-        for i in range(ntails):
-            l, = plt.plot([], [], self.PlanetColor[0], linestyle='-', linewidth=widths[i], alpha=alphas[i])
-            l1.append(l)
-            l, = plt.plot([], [], self.PlanetColor[1], linestyle='-', linewidth=widths[i], alpha=alphas[i])
-            l2.append(l)
-            l, = plt.plot([], [], self.PlanetColor[2], linestyle='-', linewidth=widths[i], alpha=alphas[i])
-            l3.append(l)
-        
-        
-        plt.xlim(-2, 2)
-        plt.ylim(-2, 2)
-        plt.axis('off')
-        plt.gca().set_position((0, 0, 1, 1))
-        line_ani = animation.FuncAnimation(fig1, self.update_line, self.Neval, fargs=(p1, p2, p3, l1, l2, l3, self.sv, self.Neval),
-                                           interval=7, blit=True)
-        
-        # To save the animation, use the command: line_ani.save('lines.mp4')
-        #plt.show()
-        line_ani.save("tribody_" + str(self.sol) +".mp4")
-        print("done")
-        
-        
-    
-    def Animation2(self):
         print("starting animation ...")
         fig1 = plt.figure(dpi=200)
         plt.style.use('dark_background')
@@ -223,7 +174,7 @@ class ImageMaker():
         plt.ylim(-2, 2)
         plt.axis('off')
         plt.gca().set_position((0, 0, 1, 1))
-        line_ani = animation.FuncAnimation(fig1, self.update_line2, self.Neval, fargs=(l1, l2, l3, p1, p2, p3, h1, h2, h3, self.sv, self.Neval),
+        line_ani = animation.FuncAnimation(fig1, self.update_line, self.Neval, fargs=(l1, l2, l3, p1, p2, p3, h1, h2, h3, self.sv, self.Neval),
                                            interval=7, blit=True)
         
         line_ani.save("tribody_" + str(self.sol) +".mp4")
