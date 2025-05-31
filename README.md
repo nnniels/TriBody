@@ -10,9 +10,9 @@ Disclaimer : this code is obviously amateur's work. No garantee, no support, jus
 ## Install & dependencies
 This code uses Python 3.12, and was tested on Linux (Kubunu 24.04). It should work fine on any system with Python 3.10+ though.
 It requires :
- - numpy
- - matplotlib
- - scipy
+ - numpy (tested with 2.1)
+ - matplotlib (tested with 3.9)
+ - scipy (tested with 1.14)
 
 ## License
 
