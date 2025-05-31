@@ -18,7 +18,8 @@ It requires :
 
 Licensed as BSD-2.
 This code is free to use, modify and distribute as a free software. Feel free to do whatever !
-I have no idea how licensing for images and videos work, so just do as you please with them.
+
+Images and videos are under CC-BY license. Copy, edit and distribute freely as long as you quote the source.
 
 ## Sources
 
